@@ -1,37 +1,45 @@
-import { FC, useState } from 'react';
-import { ReactSortable } from 'react-sortablejs';
-import { Tile } from './Tile';
+import { FC, useState } from "react"
+import { ReactSortable } from "react-sortablejs"
+import { Tile } from "./Tile"
 
 interface IBoardProps {
-  title: string;
+  title: string
 }
 
 interface ICard {
-  id: number;
-  text: string;
+  id: number
+  text: string
+  opacity?: string
 }
 
 export const Board: FC<IBoardProps> = ({ title }) => {
-  const [showForm, setShowForm] = useState(false);
-  const [text, setText] = useState<string>('');
-  const [cards, setCards] = useState<ICard[]>([]);
+  const [showForm, setShowForm] = useState(false)
+  const [text, setText] = useState<string>("")
+  const [cards, setCards] = useState<ICard[]>([])
   const handleSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
+    e.preventDefault()
     const card = {
       id: cards.length + 1,
       text,
-    };
-    setCards([...cards, card]);
-    setText('');
-  };
+    }
+    if (card.text !== "") {
+      setCards([...cards, card])
+      setText("")
+    }
+  }
+
+  const handleOnChoose = (e: any, clase: string) => {
+    console.log(cards[e.oldIndex])
+    cards[e.oldIndex].opacity = clase
+  }
 
   return (
     <div
-      className="bg-gray-200 w-11/12 sm:w-10/12 
+      className="bg-gray-200 w-11/12 sm:w-10/12
       md:w-80 h-full pb-3 rounded md:mr-6 mb-6"
     >
       <h2
-        className="px-4 py-2 text-center 
+        className="px-4 py-2 text-center
       text-black text-lg font-bold"
       >
         {title}
@@ -45,15 +53,23 @@ export const Board: FC<IBoardProps> = ({ title }) => {
           multiDrag
           setList={setCards}
           list={cards}
+          onChoose={(e: any) => {
+            handleOnChoose(e, "opacity-5")
+          }}
+          onUnchoose={(e: any) => {
+            handleOnChoose(e, "")
+          }}
         >
           {cards.map((card: ICard) => (
-            <Tile key={card.id}>{card.text}</Tile>
+            <Tile key={card.id} opacity={card.opacity}>
+              {card.text}
+            </Tile>
           ))}
         </ReactSortable>
       </article>
       {!showForm && (
         <button
-          style={{ outline: 'none', border: 'none' }}
+          style={{ outline: "none", border: "none" }}
           className="text-sm ml-2 mt-1 
   text-blue-500 hover:bg-blue-200 transition-all px-3 py-1"
           type="button"
@@ -65,7 +81,7 @@ export const Board: FC<IBoardProps> = ({ title }) => {
       {showForm && (
         <form className="w-full px-2 my-2">
           <textarea
-            style={{ border: 'none', outline: 'none' }}
+            style={{ border: "none", outline: "none" }}
             className="overflow-y-hidden block w-full 
               resize-none py-2 px-2 text-sm rounded-sm"
             name="card-task"
@@ -75,7 +91,7 @@ export const Board: FC<IBoardProps> = ({ title }) => {
           />
           <div className="flex items-center ml-1 mt-3">
             <button
-              style={{ outline: 'none', border: 'none' }}
+              style={{ outline: "none", border: "none" }}
               className="block text-sm mr-5 rounded-md
                   text-white bg-blue-500 hover:bg-blue-400 
                   transition-all px-3 py-2"
@@ -85,7 +101,7 @@ export const Board: FC<IBoardProps> = ({ title }) => {
               Add Card
             </button>
             <button
-              style={{ outline: 'none', border: 'none' }}
+              style={{ outline: "none", border: "none" }}
               className="block text-4xl text-blue-500"
               type="submit"
               onClick={() => setShowForm(false)}
@@ -96,5 +112,5 @@ export const Board: FC<IBoardProps> = ({ title }) => {
         </form>
       )}
     </div>
-  );
-};
+  )
+}
